@@ -328,4 +328,70 @@ export const worklet_context_tests = {
     let wf = Worklets.createRunInContextFn(fw);
     return ExpectValue(wf(), 200);
   },
+  test1: async () => {
+    const storedResults = Worklets.createSharedValue([]);
+    const fw = () => {
+      "worklet";
+      storedResults.value.push({ a: 100 });
+      return [{ a: 100 }];
+    };
+    let wf = Worklets.createRunInContextFn(fw);
+    const result = await wf();
+    const firstResult = storedResults[0];
+    console.log("firstResult", firstResult);
+    const firstResultSpread = { ...firstResult };
+    return ExpectValue(firstResultSpread, { a: 100 });
+  },
+  test2: async () => {
+    const fw = () => {
+      "worklet";
+      return [{ a: 100 }];
+    };
+    let wf = Worklets.createRunInContextFn(fw);
+    const result = await wf();
+    const firstResult = result[0];
+    const firstResultSpread = Object.assign({}, firstResult);
+    return ExpectValue(firstResultSpread, { a: 100 });
+  },
+  test3: async () => {
+    const fw = () => {
+      "worklet";
+      return [{ a: 100 }];
+    };
+    let wf = Worklets.createRunInContextFn(fw);
+    const result = await wf();
+    const firstResult = result[0];
+    const testingObject = { a: firstResult.a };
+    return ExpectValue(testingObject, { a: 100 });
+  },
+  test1a: async () => {
+    const fw = () => {
+      "worklet";
+      return { a: 100 };
+    };
+    let wf = Worklets.createRunInContextFn(fw);
+    const result = await wf();
+    const firstResultSpread = { ...result };
+    return ExpectValue(firstResultSpread, { a: 100 });
+  },
+  test2a: async () => {
+    const fw = () => {
+      "worklet";
+      return { a: 100 };
+    };
+    let wf = Worklets.createRunInContextFn(fw);
+    const result = await wf();
+    const firstResultSpread = Object.assign({}, result);
+    return ExpectValue(firstResultSpread, { a: 100 });
+  },
+  test3a: async () => {
+    const fw = () => {
+      "worklet";
+      return { a: 100 };
+    };
+    let wf = Worklets.createRunInContextFn(fw);
+    const result = await wf();
+    const testingObject = { a: result.a };
+    return ExpectValue(testingObject, { a: 100 });
+  },
 };
